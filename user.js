@@ -4,18 +4,14 @@ mysql     =    require('mysql'),
 bodyParser = require('body-parser');
 var app       =    express();
 
-
-
-//Conexão com a base de dados
 var pool      =    mysql.createPool({
-    connectionLimit : 0, //important
+    connectionLimit : 0, 
     host     : 'localhost',
     user     : 'root',
     password : '',
     database : 'node',
     debug    :  false
 });
-
 
 app.get("/all",function(req,res){
 	pool.getConnection(function(err,connection){
@@ -38,15 +34,12 @@ app.get("/all",function(req,res){
   	});
 });
 
-
-//Body Parser é necessário para recuperar os dados de um formulário HTML
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
 app.use(bodyParser.json());
 
-//Realiza a inserção de dados
 app.post("/insert",function(req,res){
 	try {
 	  crypto = require('crypto');
@@ -57,9 +50,7 @@ app.post("/insert",function(req,res){
 				.update(req.body.password)
                 .digest('hex');
     var post  = {user_login: req.body.login, user_name: req.body.name, user_email: req.body.email, user_password: password};
-    //Abre a conexão
     pool.getConnection(function(err,connection){
-	   	//Executa a Query
 		var query = connection.query('INSERT INTO user SET ?', post, function (error, results, fields) {
 		  	if (error){
 		  		res.json(error);
@@ -91,6 +82,4 @@ app.delete("/delete", function(req, res){
 	});
 });
 
-
-//Porta que está escutando o app Ex: localhost:3000/insert/
 app.listen(3000);
